@@ -28,10 +28,10 @@ This project focuses on detecting pneumonia from chest X-ray images using deep l
 ## Subset Used
 
 For this project, a focused subset of the dataset was selected:
-- **Image count:** 15,000
+- **Image count:** 2862
 - **Disease focus:** Pneumonia (binary classification: pneumonia vs. no pneumonia)
 - **Metadata file used:** `Data_Entry_2017.csv`
-- **Note:** Dataset not included in this repository due to size. You can download it from the source and extract a subset (~15k images) into './data'.
+- **Note:** Dataset not included in this repository due to size. You can download it from the source and extract a subset (~3k images) into './data'.
 
 ---
 
