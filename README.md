@@ -13,6 +13,19 @@ This project focuses on detecting pneumonia from chest X-ray images using deep l
 - Gain hands-on experience with transfer learning and convolutional neural networks (CNNs)
 
 ---
+## Data Wrangling Summary
+
+- Loaded metadata (`Data_Entry_2017.csv`)
+- Assigned binary labels:
+  - `1` for pneumonia (even if co-labeled)
+  - `0` for no findings
+- Removed irrelevant/multilabel entries
+- Balanced dataset to 1,431 pneumonia and 1,431 no-finding images
+- Checked for missing values and duplicates
+- Split into train/validation/test (70/15/15)
+- Saved CSVs for reproducibility
+
+---
 
 ## Dataset Source
 
@@ -31,7 +44,7 @@ For this project, a focused subset of the dataset was selected:
 - **Image count:** 2862
 - **Disease focus:** Pneumonia (binary classification: pneumonia vs. no pneumonia)
 - **Metadata file used:** `Data_Entry_2017.csv`
-- **Note:** Dataset not included in this repository due to size. You can download it from the source and extract a subset (~3k images) into './data'.
+- **Note:** Dataset not included in this repository due to size. You can download it from the source and extract a subset into './data'.
 
 ---
 
@@ -60,6 +73,12 @@ chest_xray_pneumonia_detection/
 │   └── load_preprocess_pneumonia_data.py
 ├── images/
 │   └── sample_gradcam.png
+├── metadata/
+│   ├── Data_Entry_2017.csv
+│   ├── balanced_labels.csv
+│   ├── train_labels.csv
+│   ├── val_labels.csv
+│   └── test_labels.csv
 ├── Project_Proposal_Pneumonia.txt
 ├── requirements.txt
 ├── README.md
