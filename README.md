@@ -57,6 +57,18 @@ For this project, a focused subset of the dataset was selected:
 
 ---
 
+## Model Comparison Summary
+
+| Model         | Val Acc | Test Acc | Notes                                       |
+|---------------|---------|----------|---------------------------------------------|
+| ResNet50      |  51%    |  19%     | Severe overfitting                          |
+| DenseNet121   |  65%    |  56%     | Moderate generalization                     |
+| EfficientNetB0|  52%    |  20%     | Underfit, unstable                          |
+| VGG16         |  69%    |  73.7%   | Best overall performer (trained separately) |
+
+VGG16 was trained in a separate notebook (VGG16Experiment.ipynb) to allow for two-stage fine-tuning and separate control of training.
+---
+
 ## Project Structure
 
 ```text
