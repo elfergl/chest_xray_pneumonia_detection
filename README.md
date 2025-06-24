@@ -66,7 +66,7 @@ For this project, a focused subset of the dataset was selected:
 | EfficientNetB0|  52%    |  20%     | Underfit, unstable                          |
 | VGG16         |  69%    |  73.7%   | Best overall performer (trained separately) |
 
-VGG16 was trained in a separate notebook (VGG16Experiment.ipynb) to allow for two-stage fine-tuning and separate control of training.
+**VGG16 was trained in a separate notebook (VGG16Experiment.ipynb) to allow for two-stage fine-tuning and separate control of training.
 ---
 
 ## Project Structure
