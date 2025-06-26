@@ -70,20 +70,36 @@ For this project, a focused subset of the dataset was selected:
 
 ---
 
+## Scalable Model Development
+
+To simulate a real-world deployment, the VGG16 model was retrained on an expanded dataset using 1,431 pneumonia and 15,000 normal chest X-ray images from the NIH dataset. Images were streamed from Google Drive using Keras' `ImageDataGenerator`, and class imbalance was addressed using weighted loss.
+
+Key choices included:
+- **Model**: VGG16 with top 4 layers fine-tuned
+- **Input**: 224x224 images, batch size 32
+- **Optimizer**: Adam (1e-5), with early stopping
+- **Training environment**: Google Colab Pro (A100 GPU)
+
+**Best Validation Accuracy**: 76.5%  
+**Training Accuracy**: 72.7%  
+**Validation Loss**: 0.5458
+
+The final model balances performance and efficiency, demonstrating its scalability on large and imbalanced medical imaging data.
+---
+
 ## Project Structure
 
 ```text
 chest_xray_pneumonia_detection/
 ├── data/
-│   ├── pneumonia_subset_labels.csv
-│   ├── data_README.md
 │   └── pneumonia_subset/
 ├── notebooks/
-│   ├── 01_create_subset.ipynb
-│   └── 02_train_model.ipynb
-├── scripts/
-│   ├── create_pneumonia_subset.py
-│   └── load_preprocess_pneumonia_data.py
+│   ├── Data_Wrangling.ipynb
+│   └── Folder_Organization_for_Scale.ipynb
+│   └── Image_Folder_Organization.ipynb
+│   └── Model_Experiments.ipynb
+│   └── Scaled_Model_Training.ipynb
+│   └── VGG16_Experiment.ipynb
 ├── images/
 │   └── sample_gradcam.png
 ├── metadata/
