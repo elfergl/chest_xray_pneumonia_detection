@@ -72,7 +72,7 @@ For this project, a focused subset of the dataset was selected:
 
 ## Scalable Model Development
 
-To simulate a real-world deployment, the VGG16 model was retrained on an expanded dataset using 1,431 pneumonia and 15,000 normal chest X-ray images from the NIH dataset. Images were streamed from Google Drive using Keras' `ImageDataGenerator`, and class imbalance was addressed using weighted loss.
+To simulate a real-world deployment, the VGG16 model was retrained on an expanded dataset using 1,431 pneumonia and 15,000 normal chest X-ray images from the NIH dataset. Images were streamed from Google Drive using Keras' `ImageDataGenerator`, and class imbalance was addressed using weighted loss. 
 
 Key choices included:
 - **Model**: VGG16 with top 4 layers fine-tuned
@@ -85,6 +85,7 @@ Key choices included:
 **Validation Loss**: 0.5458
 
 The final model balances performance and efficiency, demonstrating its scalability on large and imbalanced medical imaging data.
+
 ---
 
 ## Project Structure
