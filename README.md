@@ -92,8 +92,13 @@ The final model balances performance and efficiency, demonstrating its scalabili
 
 ```text
 chest_xray_pneumonia_detection/
+<<<<<<< HEAD
 ├── data/
 │   └── pneumonia_subset/
+=======
+├── models/
+│   └── chest_xray_scaled_model_final.h5
+│   └── VGG16_finetuned_model.h5
 ├── notebooks/
 │   ├── Data_Wrangling.ipynb
 │   └── Folder_Organization_for_Scale.ipynb
