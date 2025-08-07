@@ -14,7 +14,7 @@ st.write(
 
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model("models/vgg16_clean.keras")
+    model = tf.keras.models.load_model("models/vgg16_finetuned_model.h5")
     return model
 
 
