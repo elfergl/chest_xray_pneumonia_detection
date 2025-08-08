@@ -14,7 +14,7 @@ st.write(
 
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model("models/chest_xray_scaled_model_final.h5")
+    model = tf.keras.models.load_model("models/vgg16_clean.keras")
     return model
 
 
@@ -42,7 +42,10 @@ if uploaded_file:
         input_array = preprocess_image(image_data)
         prediction = model.predict(input_array)[0][0]
 
-        if prediction > 0.5:
-            st.error(f"Prediction: Pneumonia detected (Confidence: {prediction:.2f})")
+        label = "Pneumonia" if prediction > 0.5 else "Normal"
+        confidence = prediction if prediction > 0.5 else 1 - prediction
+
+        if label == "Pneumonia":
+            st.error(f"Prediction: {label} detected (Confidence: {confidence:.2f})")
         else:
-            st.success(f"Prediction: Normal (Confidence: {1 - prediction:.2f})")
+            st.success(f"Prediction: {label} (Confidence: {confidence:.2f})")
