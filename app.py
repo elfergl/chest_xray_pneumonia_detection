@@ -1,83 +1,74 @@
 # app.py
-# Streamlit inference app for VGG16 (Keras → ONNX) pneumonia model
-# - Expects models/model.onnx (exported from Keras model)
-# - Uses VGG16 "caffe" preprocessing: RGB→BGR, subtract ImageNet means, NO /255
-# - Final Keras layer was Dense(1, activation='sigmoid') → ONNX already outputs probability
-
+import os, traceback
 import streamlit as st
 import numpy as np
 from PIL import Image
 import onnxruntime as ort
 
-# ----- Preprocessing (matches tf.keras.applications.vgg16.preprocess_input in caffe mode) -----
-IMAGENET_MEAN_BGR = np.array([103.939, 116.779, 123.68], dtype="float32")  # per-channel B,G,R means
+IMAGENET_MEAN_BGR = np.array([103.939, 116.779, 123.68], dtype="float32")
 
-def preprocess_vgg16_caffe(img: Image.Image, size=(224, 224), nhwc: bool = True) -> np.ndarray:
-    """
-    Convert PIL image -> model input tensor.
-    Steps:
-      - Convert to RGB
-      - Resize to 224x224
-      - Convert to float32 in 0..255 (NO /255.0)
-      - RGB -> BGR
-      - Subtract ImageNet mean per channel
-      - Return [1,H,W,3] if nhwc=True, else [1,3,H,W]
-    """
+def preprocess_vgg16_caffe(img: Image.Image, size=(224, 224), nhwc=True):
     img = img.convert("RGB").resize(size)
-    x = np.asarray(img, dtype="float32")     # [H,W,3] RGB
-    x = x[..., ::-1]                         # BGR
-    x -= IMAGENET_MEAN_BGR                   # mean subtraction
-
+    x = np.asarray(img, dtype="float32")      # RGB
+    x = x[..., ::-1]                          # BGR
+    x -= IMAGENET_MEAN_BGR
     if nhwc:
-        x = np.expand_dims(x, axis=0)        # [1,H,W,3]
+        x = np.expand_dims(x, 0)              # [1,H,W,3]
     else:
-        x = np.transpose(x, (2, 0, 1))       # [3,H,W]
-        x = np.expand_dims(x, axis=0)        # [1,3,H,W]
+        x = np.transpose(x, (2, 0, 1))        # [3,H,W]
+        x = np.expand_dims(x, 0)              # [1,3,H,W]
     return x
 
-# ----- Streamlit UI -----
 st.set_page_config(page_title="Pneumonia Detection (ONNX)", layout="centered")
 st.title("Pneumonia Detection from Chest X-ray (ONNX)")
 
-st.write(
-    "Upload a chest X-ray image. The model will predict whether pneumonia is present. "
-    "Preprocessing matches VGG16 (caffe): RGB→BGR, ImageNet mean subtraction, no scaling."
-)
+model_path = "models/model.onnx"
+if not os.path.exists(model_path):
+    st.error(f"Model file not found at: {model_path}")
+    st.stop()
 
-# Threshold UI
-threshold = st.slider("Decision threshold", 0.0, 1.0, 0.50, 0.01)
+with st.sidebar:
+    st.subheader("Diagnostics")
+    st.write("Working dir:", os.getcwd())
+    try:
+        st.write("models/ contents:", os.listdir("models"))
+    except Exception as _:
+        st.write("No 'models' directory or cannot list.")
 
 @st.cache_resource
-def load_session():
-    # Load ONNX model and infer input layout
-    session = ort.InferenceSession("models/model.onnx", providers=["CPUExecutionProvider"])
+def load_session_and_layout(path: str):
+    session = ort.InferenceSession(path, providers=["CPUExecutionProvider"])
     inp = session.get_inputs()[0]
-    input_name = inp.name
-    # NHWC if last dim is 3; otherwise assume NCHW
-    expect_nhwc = (len(inp.shape) == 4 and inp.shape[-1] == 3)
-    return session, input_name, expect_nhwc
+    nhwc = (len(inp.shape) == 4 and inp.shape[-1] == 3)
+    return session, inp.name, nhwc, inp.shape
 
-session, input_name, expect_nhwc = load_session()
+try:
+    session, input_name, expect_nhwc, input_shape = load_session_and_layout(model_path)
+    with st.sidebar:
+        st.write("ONNX input name:", input_name)
+        st.write("ONNX input shape:", input_shape)
+        st.write("Layout:", "NHWC" if expect_nhwc else "NCHW")
+except Exception as e:
+    st.error("Failed to load ONNX model.")
+    st.code("".join(traceback.format_exception(type(e), e, e.__traceback__)))
+    st.stop()
 
-uploaded = st.file_uploader("Upload a chest X-ray image", type=["jpg", "jpeg", "png"])
+threshold = st.slider("Decision threshold", 0.0, 1.0, 0.50, 0.01)
+
+uploaded = st.file_uploader("Upload a chest X-ray", type=["jpg", "jpeg", "png"])
 if uploaded:
-    img = Image.open(uploaded)
+    try:
+        img = Image.open(uploaded)
+        x = preprocess_vgg16_caffe(img, size=(224, 224), nhwc=expect_nhwc)
+        y = session.run(None, {input_name: x})[0]      # [1,1]
+        prob = float(y.squeeze())                      # already sigmoid from Keras
+        pred = "Pneumonia" if prob >= threshold else "Normal"
 
-    # Preprocess to match training
-    x = preprocess_vgg16_caffe(img, size=(224, 224), nhwc=expect_nhwc)
-
-    # Run inference
-    y = session.run(None, {input_name: x})[0]  # expected shape [1,1]
-    prob = float(y.squeeze())                  # already sigmoid output from Keras final layer
-
-    pred = "Pneumonia" if prob >= threshold else "Normal"
-
-    # Display results
-    st.image(img, caption=f"Prediction: {pred} (Confidence: {prob:.2f})", use_column_width=True)
-
-    st.write(f"**Raw probability:** {prob:.6f}")
-    st.write(f"**Threshold:** {threshold:.2f} → **Decision:** {pred}")
-
-    # Tiny safety note if prob is extremely close to threshold
-    if abs(prob - threshold) < 0.02:
-        st.info("Prediction is close to the threshold. Consider clinical context and additional tests.")
+        st.image(img, caption=f"Prediction: {pred} (Confidence: {prob:.2f})", use_column_width=True)
+        st.write(f"**Raw probability:** {prob:.6f}")
+        st.write(f"**Threshold:** {threshold:.2f} → **Decision:** {pred}")
+        if abs(prob - threshold) < 0.02:
+            st.info("Prediction is close to the threshold. Consider context and more tests.")
+    except Exception as e:
+        st.error("Inference failed.")
+        st.code("".join(traceback.format_exception(type(e), e, e.__traceback__)))
