@@ -1,5 +1,6 @@
 #Updated traceback
 import os, traceback
+from pathlib import Path
 import streamlit as st
 import numpy as np
 from PIL import Image
@@ -20,22 +21,24 @@ def preprocess_vgg16_caffe(img: Image.Image, size=(224, 224), nhwc=True):
         x = np.expand_dims(x, 0)              # [1,3,H,W]
     return x
 
+BASE_DIR = Path(__file__).parent.resolve()
+MODEL_PATH = BASE_DIR / "models" / "model.onnx"
+model_path = str(MODEL_PATH)
+
 st.set_page_config(page_title="Pneumonia Detection (ONNX)", layout="centered")
 st.title("Pneumonia Detection from Chest X-ray (ONNX)")
 
-model_path = "models/model.onnx"
-if not os.path.exists(model_path):
-    st.error(f"Model file not found at: {model_path}")
+if not MODEL_PATH.exists():
+    st.error(f"Model file not found at: {MODEL_PATH}")
     st.stop()
 
 with st.sidebar:
     st.subheader("Diagnostics")
-    st.write("Working dir:", os.getcwd())
+    st.write("Script dir:", BASE_DIR)
     try:
-        st.write("models/ contents:", os.listdir("models"))
-    except Exception as _:
+        st.write("models/ contents:", os.listdir(BASE_DIR / "models"))
+    except Exception:
         st.write("No 'models' directory or cannot list.")
-
 @st.cache_resource
 def load_session_and_layout(path: str):
     session = ort.InferenceSession(path, providers=["CPUExecutionProvider"])
