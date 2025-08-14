@@ -22,7 +22,7 @@ def preprocess_vgg16_caffe(img: Image.Image, size=(224, 224), nhwc=True):
     return x
 
 BASE_DIR = Path(__file__).parent.resolve()
-MODEL_PATH = BASE_DIR / "models" / "model.onnx"
+MODEL_PATH = BASE_DIR / "models" / "vgg16_pytorch.onnx"
 model_path = str(MODEL_PATH)
 
 st.set_page_config(page_title="Pneumonia Detection (ONNX)", layout="centered")
