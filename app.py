@@ -22,7 +22,7 @@ def preprocess_vgg16_caffe(img: Image.Image, size=(224, 224), nhwc=True):
     return x
 
 BASE_DIR = Path(__file__).parent.resolve()
-MODEL_PATH = BASE_DIR / "exported_savedmodel" / "model.onnx"
+MODEL_PATH = BASE_DIR / "models" / "model.onnx"
 model_path = str(MODEL_PATH)
 
 st.set_page_config(page_title="Pneumonia Detection (ONNX)", layout="centered")
@@ -36,7 +36,7 @@ with st.sidebar:
     st.subheader("Diagnostics")
     st.write("Script dir:", BASE_DIR)
     try:
-        st.write("models/ contents:", os.listdir(BASE_DIR / "exported_savedmodel"))
+        st.write("models/ contents:", os.listdir(BASE_DIR / "models"))
     except Exception:
         st.write("No 'models' directory or cannot list.")
 @st.cache_resource
