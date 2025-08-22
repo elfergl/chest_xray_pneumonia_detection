@@ -108,8 +108,8 @@ The final model balances performance and efficiency, demonstrating its scalabili
 chest_xray_pneumonia_detection/
 ├── images/
 │   ├── Sample x-ray images
-|   ├── screenshots
-|   |   ├──Screenhots of the app
+|   └── screenshots
+|       └──Screenhots of the app
 ├── metadata/
 │   ├── Data_Entry_2017.csv
 │   ├── balanced_labels.csv
