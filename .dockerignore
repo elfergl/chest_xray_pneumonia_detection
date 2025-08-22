@@ -1,0 +1,8 @@
+.git
+__pycache__/
+*.onnx
+*.h5
+*.pt
+*.pth
+data/
+logs/
