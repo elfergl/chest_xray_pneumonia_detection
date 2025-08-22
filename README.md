@@ -13,6 +13,20 @@ This project focuses on detecting pneumonia from chest X-ray images using deep l
 - Gain hands-on experience with transfer learning and convolutional neural networks (CNNs)
 
 ---
+
+## Running with Docker (Containerization)
+
+This project is containerized with Docker to ensure reproducibility and easy deployment.
+
+### Build the Image and Run the Container
+```bash
+docker build -t pneumonia-app .
+docker run -p 8501:8501 pneumonia-app
+```
+The app will be available at: http://localhost:8501
+
+---
+
 ## Data Wrangling Summary
 
 - Loaded metadata (`Data_Entry_2017.csv`)
@@ -92,39 +106,45 @@ The final model balances performance and efficiency, demonstrating its scalabili
 
 ```text
 chest_xray_pneumonia_detection/
-<<<<<<< HEAD
-├── data/
-│   └── pneumonia_subset/
-=======
-├── models/
-│   └── chest_xray_scaled_model_final.h5
-│   └── VGG16_finetuned_model.h5
-├── notebooks/
-│   ├── Data_Wrangling.ipynb
-│   └── Folder_Organization_for_Scale.ipynb
-│   └── Image_Folder_Organization.ipynb
-│   └── Model_Experiments.ipynb
-│   └── Scaled_Model_Training.ipynb
-│   └── VGG16_Experiment.ipynb
 ├── images/
-│   └── sample_gradcam.png
+│   ├── Sample1_Pneumonia.jpg
+│   ├── Sample2_Pneumonia.jpg
+│   ├── Sample3_Normal.jpg
+│   └── Sample4_Normal.jpg
 ├── metadata/
 │   ├── Data_Entry_2017.csv
 │   ├── balanced_labels.csv
 │   ├── train_labels.csv
 │   ├── val_labels.csv
 │   └── test_labels.csv
-├── Project_Proposal_Pneumonia.txt
-├── requirements.txt
+├── models/
+│   ├── chest_xray_scaled_model_final.h5
+│   ├── model.onnx
+│   ├── VGG16__clean.keras
+│   └── VGG16_finetuned_model.h5
+├── notebooks/
+│   ├── Data_Wrangling.ipynb
+│   ├── Folder_Organization_for_Scale.ipynb
+│   ├── Image_Folder_Organization.ipynb
+│   ├── Model_Experiments.ipynb
+│   ├── Scaled_Model_Training.ipynb
+│   └── VGG16_Experiment.ipynb
+├── .dockerignore
+├── .gitattributes
+├── .gitignore
+├── Dockerfile
+├── Other_datasets
 ├── README.md
-└── LICENSE
+├── app.py
+├── requirements.txt
+└── runtime.txt
 ```
 ---
 
 ## Tools & Techniques
 
 - Python, NumPy, Pandas, Matplotlib
-- TensorFlow/Keras (CNNs, transfer learning)
+- TensorFlow/Keras (CNNs, transfer learning), Pytorch
 - Image preprocessing and augmentation
 - Model evaluation (Accuracy, F1, AUC, Confusion Matrix)
 - Git, GitHub for version control and sharing
@@ -133,7 +153,7 @@ chest_xray_pneumonia_detection/
 
 ## License
 
-This project is licensed under the MIT License. See 'LICENSE' for details.
+This project is licensed under the MIT License.
 
 ---
 
